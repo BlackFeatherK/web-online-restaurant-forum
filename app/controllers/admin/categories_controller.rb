@@ -3,7 +3,7 @@ class Admin::CategoriesController < Admin::BaseController
   # 這裡我們只使用index 這個 template，所以統一 render or redirect 到 index
 
   def index
-    @categories = Category.all
+    set_categories
 
     # 這裡是new or edit 的form所需要的值，如果有url有id就將form帶入edit，沒有就new。
     if params[:id]
@@ -16,11 +16,12 @@ class Admin::CategoriesController < Admin::BaseController
   def create
    @category = Category.new(category_params)
    if @category.save
-     flash[:notice] = "category was successfully created"
-     redirect_to admin_categories_path
+      flash[:notice] = "category was successfully created"
+      redirect_to admin_categories_path
    else
-     @categories = Category.all
-     render :index
+      set_categories
+      flash[:alert] = @category.errors.full_messages.to_sentence
+      render :index
    end
   end
 
@@ -29,7 +30,8 @@ class Admin::CategoriesController < Admin::BaseController
       flash[:notice] = "category was successfully updated"
       redirect_to admin_categories_path
     else
-      @categories = Category.all
+      set_categories
+      flash[:alert] = @category.errors.full_messages.to_sentence
       render :index
     end
   end
@@ -41,6 +43,10 @@ class Admin::CategoriesController < Admin::BaseController
   end
 
   private
+
+  def set_categories
+    @categories = Category.all
+  end
 
   def set_category
     @category = Category.find(params[:id])

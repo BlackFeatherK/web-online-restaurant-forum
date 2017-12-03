@@ -5,7 +5,9 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :restaurants
-    resources :categories
+    
+    # Category 只有index，將show, new, edit 都搬進index裡。
+    resources :categories, except: [:show, :new, :edit]
     root "restaurants#index"
   end
 end
